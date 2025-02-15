@@ -109,6 +109,7 @@ function createList(){
         aTag.href = element.link;
         aTag.target = "_blank"; // Opens link in new tab
         aTag.innerText = element.link;
+        aTag.style = "display: inline-block; padding: 12px 24px;";
 
         // Create paragraph for description
         let descriptionP = document.createElement("p");
