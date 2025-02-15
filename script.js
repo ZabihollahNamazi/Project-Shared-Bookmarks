@@ -7,6 +7,7 @@
 import { getUserIds } from "./storage.js";
 import { setData } from "./storage.js";
 import { getData } from "./storage.js";
+import { clearData } from "./storage.js";
 
 function createUserDropdown(getUserIds){
   let userContainer = document.querySelector("#user-container");
@@ -49,9 +50,29 @@ function addData(){
         id: userId,
         link: inputLink.value,
         description: description.value,
-        time: time
+        time: time,
+        date:{
+          year: year,
+          month: month,
+          day: day
+        }
       };
-      console.log(newData);
+        // 🔹 Retrieve existing data
+      let userData = getData(userId) || [];
+
+      if (!Array.isArray(userData)) {
+        userData = []; // Ensure it's an array
+      }
+
+      console.log("Before adding:", userData);
+
+      // 🔹 Append new data
+      userData.push(newData);
+
+      // 🔹 Store updated list
+      setData(userId, userData);
+
+      console.log("After adding:", getData(userId));
     }
   })
 }
@@ -61,9 +82,52 @@ function createList(){
 
   let userDropdown = document.querySelector("#user-dropdown");
   userDropdown.addEventListener("change", event => {
+    ulList.innerHTML = "";
     let selectedOption = userDropdown.options[userDropdown.selectedIndex];
     let userId = selectedOption.id;
     console.log(userId+ "  create list");
+    let localData = getData(userId);
+    console.log(localData + "  local data");
+    // 🔹 Ensure localData is an array
+    if (!Array.isArray(localData)) {
+      localData = []; // Prevent errors
+    }
+    console.log(localData + " after ensuring its an array");
+    if (localData.length === 0) {
+      let liEmpty = document.createElement("li");
+      liEmpty.innerHTML = `There is no data for user ${userId}`;
+      ulList.appendChild(liEmpty);
+    } 
+    else{
+      let sortedLocalData = localData.sort(({time:a}, {time:b}) => b-a); // sort by time from newest to oldest
+      console.log(sortedLocalData);
+      sortedLocalData.forEach(element => {
+        let li = document.createElement("li");
+
+        // Create anchor tag for link
+        let aTag = document.createElement("a");
+        aTag.href = element.link;
+        aTag.target = "_blank"; // Opens link in new tab
+        aTag.innerText = element.link;
+
+        // Create paragraph for description
+        let descriptionP = document.createElement("p");
+        descriptionP.innerText = element.description;
+
+        // Create paragraph for date
+        let dateP = document.createElement("p");
+        dateP.innerText = `${element.date.year}-${element.date.month}-${element.date.day}`;
+
+        // Append elements to list item
+        li.appendChild(aTag);
+        li.appendChild(descriptionP);
+        li.appendChild(dateP);
+
+        // Append list item to list
+        ulList.appendChild(li);
+      });
+    }
+    
     
   })
 }
