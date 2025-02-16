@@ -57,19 +57,19 @@ function addData(){
           day: day
         }
       };
-        // 🔹 Retrieve existing data
+        //get existing data
       let userData = getData(userId) || [];
 
-      if (!Array.isArray(userData)) {
-        userData = []; // Ensure it's an array
-      }
-
+      // if (!Array.isArray(userData)) {
+      //   userData = []; // make sure it is array
+      // }
+      userData = isArray(userData);
       console.log("Before adding:", userData);
 
-      // 🔹 Append new data
+      //push new data
       userData.push(newData);
 
-      // 🔹 Store updated list
+      //add new data to existing data
       setData(userId, userData);
 
       console.log("After adding:", getData(userId));
@@ -88,7 +88,7 @@ function createList(){
     console.log(userId+ "  create list");
     let localData = getData(userId);
     console.log(localData + "  local data");
-    // 🔹 Ensure localData is an array
+    //make sure  localData is an array
     if (!Array.isArray(localData)) {
       localData = []; // Prevent errors
     }
@@ -133,6 +133,13 @@ function createList(){
   })
 }
 
+function isArray(userData){
+  if (!Array.isArray(userData)) {
+    return userData = []; // make sure it is array
+  }
+  else{return userData;}
+}
+
 window.onload = function () {
   const users = getUserIds();
   createUserDropdown(users);
@@ -140,3 +147,4 @@ window.onload = function () {
   createList()
   //document.querySelector("body").innerText = `There are ${users.length} users`;
 };
+
